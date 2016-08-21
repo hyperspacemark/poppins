@@ -1,13 +1,13 @@
-@objc class ApplicationController {
+class ApplicationController {
     let manager = LinkManager(service: UnconfiguredService())
 
     var linkedService: Service {
         get {
-            let str = NSUserDefaults.standardUserDefaults().objectForKey(StoredServiceKey) as? String
-            return Service(string: str) ?? .Unconfigured
+            let str = UserDefaults.standard.object(forKey: StoredServiceKey) as? String
+            return Service(string: str) ?? .unconfigured
         }
         set {
-            NSUserDefaults.standardUserDefaults().setObject(newValue.description, forKey: StoredServiceKey)
+            UserDefaults.standard.set(newValue.description, forKey: StoredServiceKey)
         }
     }
 
@@ -19,26 +19,26 @@
 
     func configureLinkedService() {
         switch linkedService {
-        case .Dropbox: manager.setService(DropboxService())
+        case .dropbox: manager.setService(DropboxService())
         default: break
         }
 
         manager.setup()
 
         if !manager.isLinked() {
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "setLinkedService", name: AccountLinkedNotificationName, object: .None)
+            NotificationCenter.default.addObserver(self, selector: "setLinkedService", name: NSNotification.Name(rawValue: AccountLinkedNotificationName), object: .none)
         }
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     func setLinkedService() {
         linkedService = manager.type
     }
 
-    func handleExternalURL(url: NSURL) -> Bool {
+    func handleExternalURL(_ url: URL) -> Bool {
         return manager.finalizeAuthentication(url)
     }
 }

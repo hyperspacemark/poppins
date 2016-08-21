@@ -1,12 +1,12 @@
 import Foundation
 import Runes
 
-class ImageFetcherOperation: NSOperation {
+class ImageFetcherOperation: Operation {
     let path: String
     let size: CGSize
-    let callback: UIImage -> ()
+    let callback: (UIImage) -> ()
 
-    init(path: String, size: CGSize, callback: UIImage -> ()) {
+    init(path: String, size: CGSize, callback: @escaping (UIImage) -> ()) {
         self.path = path
         self.size = size
         self.callback = callback
@@ -14,7 +14,7 @@ class ImageFetcherOperation: NSOperation {
     }
 
     override func main() {
-        let data = NSData(contentsOfFile: path)
+        let data = try? Data(contentsOf: URL(fileURLWithPath: path))
         let image = data >>- imageForData
         let scaledImage = image?.imageForSize(size)
         

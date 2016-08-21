@@ -3,33 +3,33 @@ import Gifu
 class Cache<T> {
     var cache: [String: T] = [:]
 
-    func itemForKey(key: String) -> T? {
+    func itemForKey(_ key: String) -> T? {
         return cache[key]
     }
 
-    func setItem(item: T, forKey key: String) {
+    func setItem(_ item: T, forKey key: String) {
         cache[key] = item
     }
 
     func purge() {
-        println("purging cache")
+        print("purging cache")
         cache = [:]
     }
 }
 
-@objc class CachePurger {
+class CachePurger {
     let cache: Cache<UIImage>
 
     init(cache: Cache<UIImage>) {
         self.cache = cache
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("didRecieveMemoryWarning"), name: UIApplicationDidReceiveMemoryWarningNotification, object: .None)
+        NotificationCenter.default.addObserver(self, selector: #selector(CachePurger.didRecieveMemoryWarning), name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: .none)
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
-    func didRecieveMemoryWarning() {
+    @objc func didRecieveMemoryWarning() {
         cache.purge()
     }
 

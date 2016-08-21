@@ -1,7 +1,4 @@
-github "thoughtbot/Cascade" ~> 0.4.1
-github "kaishin/Gifu" ~> 0.10.0
-github "antitypical/Result" "master"
-github "thoughtbot/Runes" ~> 2.0.0
-
-github "Quick/Quick" ~> 0.3.1
-github "Quick/Nimble" ~> 1.0.0
+github "hyperspacemark/Cascade" "master"
+github "hyperspacemark/Gifu" "swift3"
+github "antitypical/Result" "3.0.0-alpha.3"
+github "hyperspacemark/Runes" "swift3"

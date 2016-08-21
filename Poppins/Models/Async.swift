@@ -1,12 +1,12 @@
 private let queue = AsyncQueue(name: "PoppinsSyncQueue", maxOperations: 10)
 
 class Async {
-    private var _done: (() -> ())?
+    fileprivate var _done: (() -> ())?
 
-    class func map<U, T>(u: [U], f: U -> T) -> Async {
-        var proc = Async()
+    class func map<U, T>(_ u: [U], f: @escaping (U) -> T) -> Async {
+        let proc = Async()
 
-        u.map { x in
+        u.forEach { x in
             queue.addOperationWithBlock { _ = f(x) }
         }
 
@@ -15,7 +15,7 @@ class Async {
         return proc
     }
 
-    func done(f: () -> ()) {
+    func done(_ f: (() -> ())) {
         _done = f
     }
 }

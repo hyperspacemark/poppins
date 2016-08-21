@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D53B6151D690F20008A0682 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA13D8FF1A78373400E2611C /* Quick.framework */; };
+		4D53B6161D690F2C008A0682 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA13D8FE1A78373400E2611C /* Nimble.framework */; };
+		4D53B6171D690F3A008A0682 /* Gifu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA4A51601A76EC5D00DCEAA8 /* Gifu.framework */; };
 		52F67282AB2CBF409064A361 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A2729CDC3064EC8E18E74E8 /* Images.xcassets */; };
 		5D8975CA1A43807D00F72C27 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8975C91A43807D00F72C27 /* Button.swift */; };
 		6552338E2EB4663B2328ED58 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636D3C7953B819874CE387DA /* AppDelegate.swift */; };
@@ -26,8 +29,6 @@
 		EA13D8CE1A7824FF00E2611C /* PoppinsCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13D8CD1A7824FF00E2611C /* PoppinsCellViewModel.swift */; };
 		EA13D8D01A78265700E2611C /* PoppinsCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13D8CF1A78265700E2611C /* PoppinsCellController.swift */; };
 		EA13D8D21A78315A00E2611C /* ServiceUpdateObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA13D8D11A78315A00E2611C /* ServiceUpdateObserver.swift */; };
-		EA13D9001A78373400E2611C /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA13D8FE1A78373400E2611C /* Nimble.framework */; };
-		EA13D9011A78373400E2611C /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA13D8FF1A78373400E2611C /* Quick.framework */; };
 		EA13D9021A78374D00E2611C /* Nimble.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EA13D8FE1A78373400E2611C /* Nimble.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EA13D9031A78374D00E2611C /* Quick.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EA13D8FF1A78373400E2611C /* Quick.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EA2B79141A7C21310016F749 /* ManagedObjectContextObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2B79131A7C21310016F749 /* ManagedObjectContextObserver.swift */; };
@@ -134,7 +135,6 @@
 		EAE3D1D21B1CE79C0091014B /* EmptyState.xib in Resources */ = {isa = PBXBuildFile; fileRef = EAE3D1D11B1CE79C0091014B /* EmptyState.xib */; };
 		EAE3D1D41B1CF0BD0091014B /* EmptyStateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE3D1D31B1CF0BD0091014B /* EmptyStateViewController.swift */; };
 		EAE3D1D61B1E0A560091014B /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAE3D1D51B1E0A560091014B /* Result.framework */; };
-		EAE3D1D81B1E0AA30091014B /* Box.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAE3D1D71B1E0AA30091014B /* Box.framework */; };
 		EAE3D1DA1B1E264D0091014B /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE3D1D91B1E264D0091014B /* UIViewController.swift */; };
 		EAE3D1DC1B1E2E230091014B /* PopupViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE3D1DB1B1E2E230091014B /* PopupViewManager.swift */; };
 		EAF49B8B1A30FF1000B395DF /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF49B8A1A30FF1000B395DF /* UIImage.swift */; };
@@ -272,8 +272,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA13D9001A78373400E2611C /* Nimble.framework in Frameworks */,
-				EA13D9011A78373400E2611C /* Quick.framework in Frameworks */,
+				4D53B6171D690F3A008A0682 /* Gifu.framework in Frameworks */,
+				4D53B6161D690F2C008A0682 /* Nimble.framework in Frameworks */,
+				4D53B6151D690F20008A0682 /* Quick.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +286,6 @@
 				F80BE3E61A41E5B9009192A4 /* Security.framework in Frameworks */,
 				EA9EE8A61AD58A9D00742B68 /* FBSDKMessengerShareKit.framework in Frameworks */,
 				EA4A51651A76EC6500DCEAA8 /* Runes.framework in Frameworks */,
-				EAE3D1D81B1E0AA30091014B /* Box.framework in Frameworks */,
 				EA4A51611A76EC5D00DCEAA8 /* Gifu.framework in Frameworks */,
 				EAE3D1D61B1E0A560091014B /* Result.framework in Frameworks */,
 				EA4A515F1A76EC5A00DCEAA8 /* Cascade.framework in Frameworks */,
@@ -656,11 +656,15 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = POP;
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = thoughtbot;
 				TargetAttributes = {
+					2DBA6B2B62D406A34A4331FC = {
+						LastSwiftMigration = 0800;
+					};
 					4E511CA83D18390E4117F469 = {
-						DevelopmentTeam = 8E7TQ638ZD;
+						DevelopmentTeam = 58WAG2ULA9;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -731,7 +735,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Runes.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Cascade.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Gifu.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Box.framework",
 			);
 			name = "Run Script";
 			outputPaths = (
@@ -913,9 +916,11 @@
 				);
 				INFOPLIST_FILE = "UnitTests/Resources/UnitTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.thoughtbot.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -929,6 +934,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				DEVELOPMENT_TEAM = 58WAG2ULA9;
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -938,6 +944,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "Poppins/Resources/Other-Sources/Info.plist";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -947,10 +954,12 @@
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"$(inherited)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.thoughtbot.poppins;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -963,6 +972,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 58WAG2ULA9;
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -978,12 +988,15 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Poppins/Resources/Other-Sources/Info.plist";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.thoughtbot.poppins;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1003,15 +1016,21 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = "${PROJECT_DIR}/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
@@ -1033,6 +1052,7 @@
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Poppins/Resources/Other-Sources/Poppins-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1053,15 +1073,22 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "${PROJECT_DIR}/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1106,10 +1133,12 @@
 				);
 				INFOPLIST_FILE = "UnitTests/Resources/UnitTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.thoughtbot.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};

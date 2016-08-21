@@ -1,11 +1,11 @@
 import UIKit
 import Foundation
 
-func imageForData(data: NSData) -> UIImage? {
+func imageForData(_ data: Data) -> UIImage? {
     return UIImage(data: data)
 }
 
-func imageSizeConstrainedByWidth(width: CGFloat)(image: UIImage) -> CGSize {
+func imageSizeConstrainedByWidth(_ width: CGFloat, _ image: UIImage) -> CGSize {
     let aspectRatio = image.size.height / image.size.width
     return CGSize(width: width, height: width * aspectRatio)
 }
@@ -15,11 +15,11 @@ extension UIImage {
         return size.height / size.width
     }
 
-    func imageForSize(size: CGSize) -> UIImage {
+    func imageForSize(_ size: CGSize) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-        self.drawInRect(CGRect(origin: CGPointZero, size: size))
+        self.draw(in: CGRect(origin: CGPoint.zero, size: size))
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        return scaledImage
+        return scaledImage!
     }
 }

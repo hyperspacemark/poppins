@@ -13,14 +13,14 @@ class RootViewController: UIViewController {
     }
 
     var linkAccountViewController: LinkAccountViewController {
-        let storyboard = UIStoryboard(name: "Authentication", bundle: .None)
+        let storyboard = UIStoryboard(name: "Authentication", bundle: .none)
         let vc = storyboard.instantiateInitialViewController() as! LinkAccountViewController
         vc.controller = controller?.linkAccountController
         return vc
     }
 
     var cascadeViewController: UINavigationController {
-        let storyboard = UIStoryboard(name: "Main", bundle: .None)
+        let storyboard = UIStoryboard(name: "Main", bundle: .none)
         let nav = storyboard.instantiateInitialViewController() as! UINavigationController
         let vc = nav.topViewController as! CascadeViewController
         vc.controller = controller?.cascadeController
@@ -31,30 +31,30 @@ class RootViewController: UIViewController {
         super.viewDidLoad()
         showViewController(initialViewController)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "transitionToMainFlow", name: AccountLinkedNotificationName, object: .None)
+        NotificationCenter.default.addObserver(self, selector: #selector(RootViewController.transitionToMainFlow), name: NSNotification.Name(rawValue: AccountLinkedNotificationName), object: .none)
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     func transitionToMainFlow() {
         let cascade = cascadeViewController
         cascade.moveToParent(self) { childView in
-            childView.transform = CGAffineTransformMakeScale(0.9, 0.9)
-            view.sendSubviewToBack(childView)
+            childView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            view.sendSubview(toBack: childView)
         }
 
-        transitionFromViewController(activeViewController!, toViewController: cascade, duration: 0.33, options: .CurveEaseInOut, animations: {
-            cascade.view.transform = CGAffineTransformIdentity
-            self.activeViewController?.view.frame = CGRectOffset(self.view.bounds, 0, self.view.bounds.height)
+        transition(from: activeViewController!, to: cascade, duration: 0.33, options: UIViewAnimationOptions(), animations: {
+            cascade.view.transform = CGAffineTransform.identity
+            self.activeViewController?.view.frame = self.view.bounds.offsetBy(dx: 0, dy: self.view.bounds.height)
         }) { _ in
-            self.activeViewController?.removeFromParent(.None)
+            self.activeViewController?.removeFromParent(.none)
             self.activeViewController = cascade
         }
     }
 
-    func showViewController(viewController: UIViewController) {
+    func showViewController(_ viewController: UIViewController) {
         viewController.moveToParent(self) { childView in
             childView.frame = view.bounds
             view.addSubview(childView)

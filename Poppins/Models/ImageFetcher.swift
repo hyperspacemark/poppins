@@ -1,7 +1,7 @@
 import Foundation
 import Runes
 
-@objc class ImageFetcher {
+class ImageFetcher {
     let imageCache: Cache<UIImage>
     let purger: CachePurger
     let operationQueue: AsyncQueue
@@ -10,44 +10,46 @@ import Runes
     init() {
         imageCache = Cache<UIImage>()
         purger = CachePurger(cache: imageCache)
-        operationQueue = AsyncQueue(name: "PoppinsCacheQueue", maxOperations: NSOperationQueueDefaultMaxConcurrentOperationCount)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("didReceiveMemoryWarning"), name: UIApplicationDidReceiveMemoryWarningNotification, object: .None)
+        operationQueue = AsyncQueue(name: "PoppinsCacheQueue", maxOperations: OperationQueue.defaultMaxConcurrentOperationCount)
+        NotificationCenter.default.addObserver(self, selector: #selector(ImageFetcher.didReceiveMemoryWarning), name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: .none)
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
-    func didReceiveMemoryWarning() {
+    @objc func didReceiveMemoryWarning() {
         inProgress = []
     }
 
-    func fetchImage(size: CGSize, path: String) -> UIImage? {
+    func fetchImage(_ size: CGSize, path: String) -> UIImage? {
         if let image = imageCache.itemForKey(path) {
             return image
         } else {
-            if size == CGSizeZero { return .None }
+            if size == CGSize.zero { return .none }
 
             dispatch_to_main {
                 objc_sync_enter(self.inProgress)
-                if contains(self.inProgress, path) { return }
+                if self.inProgress.contains(path) { return }
                 self.inProgress.append(path)
                 objc_sync_exit(self.inProgress)
                 
                 let operation = ImageFetcherOperation(path: path, size: size) { image in
-                    curry(self.imageCache.setItem) <^> image <*> path
+                    self.imageCache.setItem(image, forKey: path)
                     
                     dispatch_to_main {
                         objc_sync_enter(self.inProgress)
-                        self.inProgress.removeAtIndex <^> find(self.inProgress, path)
+                        if let index = self.inProgress.index(of: path) {
+                            self.inProgress.remove(at: index)
+                        }
                         objc_sync_exit(self.inProgress)
-                        NSNotificationCenter.defaultCenter().postNotificationName("CacheDidUpdate", object: .None)
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "CacheDidUpdate"), object: .none)
                     }
                 }
                 
                 self.operationQueue.addOperation(operation)
             }
-            return .None
+            return .none
         }
     }
 }

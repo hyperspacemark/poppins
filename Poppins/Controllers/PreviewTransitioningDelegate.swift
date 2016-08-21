@@ -8,15 +8,15 @@ class PreviewTransitioningDelegate: NSObject, UIViewControllerTransitioningDeleg
         super.init()
     }
 
-    func presentationControllerForPresentedViewController(presented: UIViewController, presentingViewController presenting: UIViewController!, sourceViewController source: UIViewController) -> UIPresentationController? {
-       return PreviewPresentationController(presentedViewController: presented, presentingViewController: presenting, frame: startingFrame)
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+       return PreviewPresentationController(presentedViewController: presented, presentingViewController: presenting!, frame: startingFrame)
     }
 
-    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return PreviewPresentationAnimationController(isPresenting: true, startingFrame: startingFrame)
     }
 
-    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return PreviewPresentationAnimationController(isPresenting: false, startingFrame: startingFrame)
     }
 }

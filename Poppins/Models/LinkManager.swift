@@ -19,18 +19,18 @@ class LinkManager: LinkableService {
         self.service = service
     }
 
-    func setService(service: LinkableService) {
+    func setService(_ service: LinkableService) {
         self.service = service
     }
 
-    func initiateAuthentication<T>(meta: T) {
+    func initiateAuthentication<T>(_ meta: T) {
         service.initiateAuthentication(meta)
     }
 
-    func finalizeAuthentication(url: NSURL) -> Bool {
+    func finalizeAuthentication(_ url: URL) -> Bool {
         let handled = service.finalizeAuthentication(url)
         if handled && isLinked() {
-            NSNotificationCenter.defaultCenter().postNotificationName(AccountLinkedNotificationName, object: .None)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: AccountLinkedNotificationName), object: .none)
         }
         return handled
     }

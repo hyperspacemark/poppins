@@ -29,7 +29,7 @@ class CascadeController {
         viewModel = CascadeViewModel(images: imageStore.cachedImages() ?? [])
     }
 
-    func registerForChanges(callback: ([NSIndexPath], [NSIndexPath], [NSIndexPath]) -> ()) {
+    func registerForChanges(_ callback: @escaping ([IndexPath], [IndexPath], [IndexPath]) -> ()) {
         observer.callback = { inserted, updated, deleted in
             let d = deleted.map(self.createIndexPathFromImage)
             let u = updated.map(self.createIndexPathFromImage)
@@ -39,11 +39,17 @@ class CascadeController {
         }
     }
 
-    private func createIndexPathFromImage(image: CachedImage) -> NSIndexPath? {
-        return find(viewModel.images.map { $0.path }, image.path) >>- { NSIndexPath(forRow: $0, inSection: 0) }
+    private func createIndexPathFromImage(image: CachedImage) -> IndexPath? {
+        let imagePaths = viewModel.images.map { $0.path }
+
+        if let index = imagePaths.index(of: image.path) {
+            return IndexPath(row: index, section: 0)
+        } else {
+            return nil
+        }
     }
 
-    func cellControllerForIndexPath(indexPath: NSIndexPath) -> PoppinsCellController? {
+    func cellControllerForIndexPath(_ indexPath: IndexPath) -> PoppinsCellController? {
         let path = viewModel.imagePathForIndexPath(indexPath)
         return PoppinsCellController(imageFetcher: imageFetcher, path: path ?? "")
     }

@@ -3,21 +3,21 @@ let StoredServiceKey = "PoppinsStoredServiceKey"
 private let UnconfiguredServiceName = "Unconfigured"
 private let DropboxServiceName = "Dropbox"
 
-enum Service: Printable {
-    case Unconfigured
-    case Dropbox
+enum Service: CustomStringConvertible {
+    case unconfigured
+    case dropbox
 
     var description: String {
         switch self {
-        case .Unconfigured: return UnconfiguredServiceName
-        case .Dropbox: return DropboxServiceName
+        case .unconfigured: return UnconfiguredServiceName
+        case .dropbox: return DropboxServiceName
         }
     }
 
     init?(string: String?) {
         switch string {
-        case .Some(UnconfiguredServiceName): self = .Unconfigured
-        case .Some(DropboxServiceName): self = .Dropbox
+        case .some(UnconfiguredServiceName): self = .unconfigured
+        case .some(DropboxServiceName): self = .dropbox
         default: return nil
         }
     }

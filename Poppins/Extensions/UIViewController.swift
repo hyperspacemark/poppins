@@ -1,18 +1,18 @@
 import UIKit
 
 extension UIViewController {
-    func moveToParent(parent: UIViewController, @noescape handleMove: UIView -> ()) {
-        willMoveToParentViewController(parent)
+    func moveToParent(_ parent: UIViewController, handleMove: (UIView) -> ()) {
+        willMove(toParentViewController: parent)
         parent.addChildViewController(self)
         handleMove(view)
-        didMoveToParentViewController(parent)
+        didMove(toParentViewController: parent)
     }
 
-    func removeFromParent(handleMove: (() -> ())?) {
-        willMoveToParentViewController(.None)
+    func removeFromParent(_ handleMove: (() -> ())?) {
+        willMove(toParentViewController: .none)
         view.removeFromSuperview()
         handleMove?()
         removeFromParentViewController()
-        didMoveToParentViewController(.None)
+        didMove(toParentViewController: .none)
     }
 }

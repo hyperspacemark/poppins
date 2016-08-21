@@ -1,21 +1,21 @@
 class AsyncQueue {
-    private let queue = NSOperationQueue()
+    fileprivate let queue = OperationQueue()
 
     init(name: String, maxOperations: Int) {
         queue.name = name
         queue.maxConcurrentOperationCount = maxOperations
     }
 
-    func addOperation(operation: NSOperation) {
+    func addOperation(_ operation: Operation) {
         queue.addOperation(operation)
     }
 
-    func addOperationWithBlock(block: () -> ()) {
-        queue.addOperationWithBlock(block)
+    func addOperationWithBlock(_ block: @escaping () -> ()) {
+        queue.addOperation(block)
     }
 
-    func finally(block: () -> ()) {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) { [unowned self] in
+    func finally(_ block: @escaping () -> ()) {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async { [unowned self] in
             self.queue.waitUntilAllOperationsAreFinished()
             block()
         }

@@ -14,10 +14,11 @@ class SyncEngine {
     }
 
     func runSync() {
-        client.getFiles().observe { result in
+        _ = client.getFiles().observe { result in
             dispatch_to_user_initiated {
                 let files = result.value?.filter {
-                    contains(SupportedFileExtensions, $0.path.pathExtension.lowercaseString)
+                    let url = URL(fileURLWithPath: $0.path)
+                    return SupportedFileExtensions.contains(url.pathExtension.lowercased())
                 }
 
                 self.processFiles <^> files
@@ -29,7 +30,8 @@ class SyncEngine {
         let cachedImages = store.cachedImages() ?? []
 
         let updatable: [CachedImage] = cachedImages.reduce([]) { accum, image in
-            if let index = find(fileInfos.map { $0.path }, image.path) {
+            let filePaths = fileInfos.map { $0.path }
+            if let index = filePaths.index(of: image.path) {
                 if fileInfos[index].rev != image.rev {
                     image.rev = fileInfos[index].rev
                     return accum + [image]
@@ -39,16 +41,18 @@ class SyncEngine {
         }
 
         let creatable = fileInfos.filter { info in
-            return find(cachedImages.map { $0.path }, info.path) == .None
+            let paths = cachedImages.map { $0.path }
+            return paths.index(of: info.path) == .none
         }
 
         let deletable = cachedImages.filter { image in
-            return find(fileInfos.map { $0.path }, image.path) == .None
+            let paths = fileInfos.map { $0.path }
+            return paths.index(of: image.path) == .none
         }
 
-        creatable.map(createFile)
-        updatable.map(syncFile)
-        deletable.map(deleteFile)
+        _ = creatable.map(createFile)
+        _ = updatable.map(syncFile)
+        _ = deletable.map(deleteFile)
     }
 
     private func createFile(fileInfo: FileInfo) {
@@ -58,29 +62,30 @@ class SyncEngine {
         syncFile <^> cachedImage
     }
 
-    private func syncFile(cachedImage: CachedImage) {
-        var semaphore = dispatch_semaphore_create(0)
+    fileprivate func syncFile(_ cachedImage: CachedImage) {
+        let semaphore = DispatchSemaphore(value: 0)
 
         dispatch_to_main {
             _ = self.client.getFile(cachedImage.path, destinationPath: cachedImage.documentDirectoryPath).observe { result in
                 dispatch_to_user_initiated {
-                    let data = result.value >>- { NSData(contentsOfFile: $0) }
-                    let image = data >>- imageForData
+                    let url = result.value.map { URL(fileURLWithPath: $0) }
+                    let data = url.flatMap { try? Data(contentsOf: $0) }
+                    let image = data.flatMap { imageForData($0) }
                     let aspectRatio = Double(image?.aspectRatio ?? 1.0)
                     cachedImage.aspectRatio = aspectRatio
                     dispatch_to_main {
                         self.getShareURL(cachedImage) {
                             self.store.saveCachedImage(cachedImage)
-                            dispatch_semaphore_signal(semaphore)
+                            _ = DispatchSemaphore.signal(semaphore)
                         }
                     }
                 }
             }
         }
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
     }
 
-    private func getShareURL(cachedImage: CachedImage, callback: () -> ()) {
+    fileprivate func getShareURL(_ cachedImage: CachedImage, callback: @escaping () -> ()) {
         client.getShareURL(cachedImage.path).observe { result in
             dispatch_to_main {
                 result.value.map { cachedImage.shareURLPath = $0 }
@@ -89,7 +94,7 @@ class SyncEngine {
         }
     }
 
-    private func deleteFile(cachedImage: CachedImage) {
+    fileprivate func deleteFile(_ cachedImage: CachedImage) {
         store.deleteCachedImage(cachedImage)
     }
 }

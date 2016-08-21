@@ -1,33 +1,37 @@
 import MobileCoreServices
 
 class GifItemSource: NSObject, UIActivityItemSource {
-    let imageData: NSData
-    let url: NSURL?
+    let imageData: Data
+    let url: URL?
 
-    init(data: NSData, url: NSURL?) {
+    init(data: Data, url: URL?) {
         imageData = data
         self.url = url
         super.init()
     }
 
-    class func create(data: NSData)(url: NSURL?) -> GifItemSource {
+    class func create(_ data: Data, _ url: URL?) -> GifItemSource {
         return GifItemSource(data: data, url: url)
     }
 
-    func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject {
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
         return url ?? imageData
     }
 
-    func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
         switch activityType {
-        case UIActivityTypeCopyToPasteboard, UIActivityTypePostToTwitter: return url
+        case UIActivityType.copyToPasteboard, UIActivityType.postToTwitter: return url
         default: return imageData
         }
     }
 
-    func activityViewController(activityViewController: UIActivityViewController, dataTypeIdentifierForActivityType activityType: String?) -> String {
-        switch activityType ?? "" {
-        case UIActivityTypeCopyToPasteboard, UIActivityTypePostToTwitter: return CFBridgingRetain(kUTTypeURL) as! String
+    func activityViewController(_ activityViewController: UIActivityViewController, dataTypeIdentifierForActivityType activityType: String?) -> String {
+        guard let activityType = activityType else {
+            return kUTTypeGIF as String
+        }
+
+        switch UIActivityType(rawValue: activityType) {
+        case UIActivityType.copyToPasteboard, UIActivityType.postToTwitter: return CFBridgingRetain(kUTTypeURL) as! String
         default: return CFBridgingRetain(kUTTypeGIF) as! String
         }
     }

@@ -1,30 +1,32 @@
 import Runes
 
 class DropboxService : LinkableService {
-    let type: Service = .Dropbox
+    let type: Service = .dropbox
     var client: SyncClient {
-        return DropboxClient(session: DBSession.sharedSession())
+        return DropboxClient(session: DBSession.shared())
     }
 
     func setup() {
         let session = DBSession(appKey: Keys.dropboxKey, appSecret: Keys.dropboxSecret, root: kDBRootAppFolder)
-        DBSession.setSharedSession(session)
+        DBSession.setShared(session)
     }
 
-    func initiateAuthentication<T>(controller: T) {
-        DBSession.sharedSession().linkFromController <^> controller as? UIViewController
+    func initiateAuthentication<T>(_ controller: T) {
+        if let viewController = controller as? UIViewController {
+            DBSession.shared().link(from: viewController)
+        }
     }
 
-    func finalizeAuthentication(url: NSURL) -> Bool {
-        let account = DBSession.sharedSession().handleOpenURL(url)
-        return account != .None
+    func finalizeAuthentication(_ url: URL) -> Bool {
+        let account = DBSession.shared().handleOpen(url)
+        return account != .none
     }
 
     func isLinked() -> Bool {
-        return DBSession.sharedSession().isLinked()
+        return DBSession.shared().isLinked()
     }
 
     func unLink() {
-        DBSession.sharedSession().unlinkAll()
+        DBSession.shared().unlinkAll()
     }
 }

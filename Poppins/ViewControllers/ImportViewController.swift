@@ -9,22 +9,22 @@ class ImportViewController: UIViewController {
     var controller: ImportController?
     var importViewDidDismiss: (() -> ())?
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
     }
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         setup()
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     private func setup() {
-        modalPresentationStyle = .Custom
+        modalPresentationStyle = .custom
     }
 
     override func viewDidLoad() {
@@ -32,59 +32,64 @@ class ImportViewController: UIViewController {
         view.layer.cornerRadius = 4;
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         if let viewModel = controller?.viewModel {
-            imageView.animateWithImageData(data: viewModel.imageData)
+            imageView.animate(withGIFData: viewModel.imageData)
             imageView.startAnimatingGIF()
             setImageType(viewModel.imageType)
         }
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: .None)
+        NotificationCenter.default.addObserver(self, selector: #selector(ImportViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: .none)
     }
 
-    @objc func keyboardWillShow(notification: NSNotification) {
-        if let size = notification.userInfo?[UIKeyboardFrameEndUserInfoKey]?.CGRectValue().size,
-           let duration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]?.doubleValue
-        {
+    @objc func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo else {
+            return
+        }
+
+        let endFrame = userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue
+        let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? TimeInterval
+
+        if let size = endFrame?.cgRectValue.size, let duration = duration {
             let yTotal = view.superview?.frame.height ?? 0
-            let yOffset = CGRectGetMaxY(view.frame) - (yTotal - (size.height + 20))
+            let yOffset = view.frame.maxY - (yTotal - (size.height + 20))
             let newFrame = CGRect(origin: CGPoint(x: view.frame.origin.x, y: view.frame.origin.y - yOffset), size: view.frame.size)
 
-            UIView.animateWithDuration(duration, delay: 0, options: .CurveEaseInOut, animations: {
+            UIView.animate(withDuration: duration, delay: 0, options: UIViewAnimationOptions(), animations: {
                 self.view.frame = newFrame
-            }, completion: .None)
+            }, completion: .none)
         }
     }
 
     @IBAction func save() {
         if let image = imageView.image {
-            let row = extensionPicker.selectedRowInComponent(ImportViewPickerDefaultComponent)
+            let row = extensionPicker.selectedRow(inComponent: ImportViewPickerDefaultComponent)
             let ext = pickerView(extensionPicker, titleForRow: row, forComponent: ImportViewPickerDefaultComponent)
             controller?.saveAndUploadImage(image, name: "\(imageNameField.text)\(ext)")
-            dismissViewControllerAnimated(true, completion: importViewDidDismiss)
+            dismiss(animated: true, completion: importViewDidDismiss)
         }
     }
 
     @IBAction func cancel() {
-        dismissViewControllerAnimated(true, completion: importViewDidDismiss)
+        dismiss(animated: true, completion: importViewDidDismiss)
     }
 }
 
 private let ImportViewPickerDefaultComponent = 0
 extension ImportViewController: UIPickerViewDataSource {
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
 
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return 3
     }
 }
 
 extension ImportViewController: UIPickerViewDelegate {
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
         switch row {
         case 0: return ".gif"
         case 1: return ".png"
@@ -93,7 +98,7 @@ extension ImportViewController: UIPickerViewDelegate {
         }
     }
 
-    func pickerView(pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusingView view: UIView?) -> UIView {
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         let label = (view as? UILabel) ?? UILabel()
         label.text = self.pickerView(pickerView, titleForRow: row, forComponent: component)
         return label
@@ -101,7 +106,7 @@ extension ImportViewController: UIPickerViewDelegate {
 }
 
 extension ImportViewController {
-    func setImageType(type: String) {
+    func setImageType(_ type: String) {
         let row: Int
         switch type {
         case JPEGType: row = 1
@@ -114,6 +119,6 @@ extension ImportViewController {
 
 extension ImportViewController {
     static func create() -> ImportViewController {
-        return ImportViewController(nibName: "ImportView", bundle: .None)
+        return ImportViewController(nibName: "ImportView", bundle: .none)
     }
 }

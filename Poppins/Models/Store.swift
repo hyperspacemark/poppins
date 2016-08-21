@@ -3,63 +3,67 @@ import CoreData
 import Runes
 
 class Store {
-    private let managedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+    fileprivate let managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
 
-    private var objectModel: NSManagedObjectModel? {
-        let modelURL = NSBundle.mainBundle().URLForResource("PoppinsModel", withExtension: "momd")
-        return modelURL >>- { NSManagedObjectModel(contentsOfURL: $0) }
+    fileprivate var objectModel: NSManagedObjectModel? {
+        let modelURL = Bundle.main.url(forResource: "PoppinsModel", withExtension: "momd")
+        return modelURL >>- { NSManagedObjectModel(contentsOf: $0) }
     }
 
-    var applicationDocumentDirectory: NSURL? {
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls.last as? NSURL
+    var applicationDocumentDirectory: URL? {
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return urls.last
     }
 
     init(storeType: String = NSSQLiteStoreType) {
-        managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator
-            <^> pure(storeType)
-            <*> objectModel
-            <*> (applicationDocumentDirectory >>- appendSQLlitePathURL)
+        if let model = objectModel, let URL = applicationDocumentDirectory >>- appendSQLlitePathURL {
+            managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator(storeType, model, URL)
+        }
     }
 
-    private func appendSQLlitePathURL(url: NSURL) -> NSURL? {
-        return url.URLByAppendingPathComponent("PoppinsModel.sqlite")
+    fileprivate func appendSQLlitePathURL(_ url: URL) -> URL? {
+        return url.appendingPathComponent("PoppinsModel.sqlite")
     }
 
-    private func persistentStoreCoordinator(storeType: String)(objectModel: NSManagedObjectModel)(storeURL: NSURL) -> NSPersistentStoreCoordinator {
+    fileprivate func persistentStoreCoordinator(_ storeType: String, _ objectModel: NSManagedObjectModel, _ storeURL: URL) -> NSPersistentStoreCoordinator {
         let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: objectModel)
         let options = [
             NSInferMappingModelAutomaticallyOption: true,
             NSMigratePersistentStoresAutomaticallyOption: true
         ]
-        persistentStoreCoordinator.addPersistentStoreWithType(storeType, configuration: .None, URL: storeURL, options: options, error: nil)
+
+        _ = try? persistentStoreCoordinator.addPersistentStore(ofType: storeType, configurationName: .none, at: storeURL, options: options)
+
         return persistentStoreCoordinator
     }
 
-    func newObject<A: NSManagedObject>(objectName: String) -> A? {
-        let desc = NSEntityDescription.entityForName(objectName, inManagedObjectContext: managedObjectContext)
-        return desc.map { A(entity: $0, insertIntoManagedObjectContext: .None) }
+    func newObject<A: NSManagedObject>(_ objectName: String) -> A? {
+        let desc = NSEntityDescription.entity(forEntityName: objectName, in: managedObjectContext)
+        return desc.map { A(entity: $0, insertInto: .none) }
     }
 
-    func executeRequest<A: NSManagedObject>(request: NSFetchRequest) -> [A]? {
-        return managedObjectContext.executeFetchRequest(request, error: nil) as? [A]
+    func executeRequest<A: NSFetchRequestResult>(_ request: NSFetchRequest<A>) -> [A] {
+        let results = try? managedObjectContext.fetch(request)
+        return results ?? []
     }
 
-    func insertObject<A: NSManagedObject>(object: A) {
-        managedObjectContext.performBlockAndWait {
-            self.managedObjectContext.insertObject(object)
+    func insertObject<A: NSManagedObject>(_ object: A) {
+        managedObjectContext.performAndWait {
+            self.managedObjectContext.insert(object)
         }
     }
 
-    func deleteObject<A: NSManagedObject>(object: A) {
-        managedObjectContext.performBlockAndWait {
-            self.managedObjectContext.deleteObject(object)
+    func deleteObject<A: NSManagedObject>(_ object: A) {
+        managedObjectContext.performAndWait {
+            self.managedObjectContext.delete(object)
         }
     }
 
     func save() {
-        managedObjectContext.performBlockAndWait {
-            _ = self.managedObjectContext.save(nil);
+        managedObjectContext.performAndWait {
+            do {
+                try self.managedObjectContext.save()
+            } catch {}
         }
     }
 

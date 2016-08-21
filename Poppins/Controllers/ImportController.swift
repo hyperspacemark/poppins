@@ -1,5 +1,5 @@
 struct ImportController {
-    let imageData: NSData
+    let imageData: Data
     let imageType: String
     let store: ImageStore
     let client: SyncClient
@@ -8,8 +8,9 @@ struct ImportController {
         return ImportViewModel(imageData: imageData, imageType: imageType)
     }
 
-    func saveAndUploadImage(image: UIImage, name: String) {
-        let path = store.saveImageData(imageData, name: name, aspectRatio: Double(image.aspectRatio))
-        path.map { client.uploadFile(name, localPath: $0) }
+    func saveAndUploadImage(_ image: UIImage, name: String) {
+        if let path = store.saveImageData(imageData, name: name, aspectRatio: Double(image.aspectRatio)) {
+            client.uploadFile(name, localPath: path)
+        }
     }
 }

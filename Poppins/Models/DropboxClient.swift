@@ -21,56 +21,64 @@ class DropboxClient: NSObject, DBRestClientDelegate, SyncClient {
         return metaSignal
     }
 
-    func getFile(path: String, destinationPath: String) -> Signal<String> {
+    func getFile(_ path: String, destinationPath: String) -> Signal<String> {
         restClient.loadFile("/\(path)", intoPath: destinationPath)
         let sig = Signal<String>()
         fileSignals[path] = sig
-        return sig.finally { _ = self.fileSignals.removeValueForKey(path) }
+        return sig.finally { _ = self.fileSignals.removeValue(forKey: path) }
     }
 
-    func getShareURL(path: String) -> Signal<String> {
-        restClient.loadSharableLinkForFile("/\(path)", shortUrl: false)
+    func getShareURL(_ path: String) -> Signal<String> {
+        restClient.loadSharableLink(forFile: "/\(path)", shortUrl: false)
         return shareURLSignal
     }
 
-    func uploadFile(filename: String, localPath: String) -> Signal<Void> {
+    func uploadFile(_ filename: String, localPath: String) -> Signal<Void> {
         restClient.uploadFile(filename, toPath: "/", withParentRev: nil, fromPath: localPath)
         return uploadSignal
     }
 
-    func restClient(client: DBRestClient!, loadedFile destPath: String?) {
-        destPath >>- { self.fileSignals[$0.lastPathComponent]?.push($0) }
+    func restClient(_ client: DBRestClient!, loadedFile destPath: String?) {
+        if let destPath = destPath, let fileName = NSURL(fileURLWithPath: destPath).lastPathComponent {
+            self.fileSignals[fileName]?.push(destPath)
+        }
     }
 
-    func restClient(client: DBRestClient!, loadFileFailedWithError error: NSError?) {
-        println(error)
+    func restClient(_ client: DBRestClient!, loadFileFailedWithError error: Error?) {
+        print(error)
     }
 
-    func restClient(client: DBRestClient!, loadedMetadata metadata: DBMetadata?) {
+    func restClient(_ client: DBRestClient!, loadedMetadata metadata: DBMetadata?) {
         let fileMetadata = metadata?.contents as? [DBMetadata]
         let fileInfos: [FileInfo]? = fileMetadata?.map(FileInfo.fromDropboxMetadata)
         fileInfos.map(metaSignal.push)
     }
 
-    func restClient(client: DBRestClient!, loadMetadataFailedWithError error: NSError?) {
-        println(error)
-        metaSignal.fail <^> error
+    func restClient(_ client: DBRestClient!, loadMetadataFailedWithError error: Error?) {
+        print(error)
+
+        if let error = error {
+            metaSignal.fail(error as NSError)
+        }
     }
 
-    func restClient(restClient: DBRestClient!, loadSharableLinkFailedWithError error: NSError!) {
-        println(error)
+    func restClient(_ restClient: DBRestClient!, loadSharableLinkFailedWithError error: Error?) {
+        print(error)
     }
 
-    func restClient(restClient: DBRestClient!, loadedSharableLink link: String!, forFile path: String!) {
+    func restClient(_ restClient: DBRestClient!, loadedSharableLink link: String!, forFile path: String!) {
         shareURLSignal.push(link)
     }
 
-    func restClient(client: DBRestClient!, uploadFileFailedWithError error: NSError!) {
-        println(error)
-        uploadSignal.fail <^> error
+    func restClient(_ client: DBRestClient!, uploadFileFailedWithError error: Error?) {
+        print(error)
+
+        if let error = error {
+            uploadSignal.fail(error as NSError)
+        }
     }
 
-    func restClient(client: DBRestClient!, uploadedFile destPath: String!) {
+    func restClient(_ client: DBRestClient!, uploadedFile destPath: String?, from sourcePath: String?, metadata: DBMetadata?) {
         uploadSignal.push()
     }
 }

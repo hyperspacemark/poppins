@@ -1,4 +1,4 @@
 struct ImportViewModel {
-    let imageData: NSData
+    let imageData: Data
     let imageType: String
 }

@@ -4,7 +4,7 @@ class PoppinsCellController {
     let imageFetcher: ImageFetcher
     let path: String
     var observer: ViewModelObserver?
-    var size = CGSizeZero
+    var size = CGSize.zero
 
     var viewModel: PoppinsCellViewModel {
         didSet {
@@ -15,26 +15,26 @@ class PoppinsCellController {
     init(imageFetcher: ImageFetcher, path: String) {
         self.imageFetcher = imageFetcher
         self.path = path
-        viewModel = PoppinsCellViewModel(image: .None)
+        viewModel = PoppinsCellViewModel(image: .none)
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
-    func fetchImage(size: CGSize) {
+    func fetchImage(_ size: CGSize) {
         self.size = size
         if let image = imageFetcher.fetchImage(size, path: path) {
             viewModel = PoppinsCellViewModel(image: image)
         } else {
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "cacheDidUpdate", name: "CacheDidUpdate", object: .None)
+            NotificationCenter.default.addObserver(self, selector: #selector(PoppinsCellController.cacheDidUpdate), name: NSNotification.Name(rawValue: "CacheDidUpdate"), object: .none)
         }
     }
 
     @objc func cacheDidUpdate() {
         if let image = imageFetcher.fetchImage(size, path: path) {
             viewModel = PoppinsCellViewModel(image: image)
-            NSNotificationCenter.defaultCenter().removeObserver(self)
+            NotificationCenter.default.removeObserver(self)
         }
     }
 }

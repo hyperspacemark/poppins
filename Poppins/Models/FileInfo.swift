@@ -4,7 +4,7 @@ struct FileInfo {
 }
 
 extension FileInfo {
-    static func fromDropboxMetadata(metadata: DBMetadata) -> FileInfo {
-        return FileInfo(path: metadata.path.lastPathComponent, rev: metadata.rev)
+    static func fromDropboxMetadata(_ metadata: DBMetadata) -> FileInfo {
+        return FileInfo(path: NSURL(fileURLWithPath: metadata.path).lastPathComponent!, rev: metadata.rev)
     }
 }

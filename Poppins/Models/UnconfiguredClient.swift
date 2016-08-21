@@ -3,15 +3,15 @@ struct UnconfiguredClient: SyncClient {
         return Signal<[FileInfo]>()
     }
 
-    func getFile(path: String, destinationPath: String) -> Signal<String> {
+    func getFile(_ path: String, destinationPath: String) -> Signal<String> {
         return Signal<String>()
     }
 
-    func getShareURL(path: String) -> Signal<String> {
+    func getShareURL(_ path: String) -> Signal<String> {
         return Signal<String>()
     }
 
-    func uploadFile(filename: String, localPath: String) -> Signal<Void> {
+    func uploadFile(_ filename: String, localPath: String) -> Signal<Void> {
         return Signal<Void>()
     }
 }

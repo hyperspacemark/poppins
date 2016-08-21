@@ -3,8 +3,8 @@ protocol LinkableService {
     var client: SyncClient { get }
 
     func setup()
-    func initiateAuthentication<T>(T)
-    func finalizeAuthentication(NSURL) -> Bool
+    func initiateAuthentication<T>(_: T)
+    func finalizeAuthentication(_: URL) -> Bool
     func isLinked() -> Bool
     func unLink()
 }

@@ -2,7 +2,7 @@ import Foundation
 
 extension CachedImage {
     var documentDirectoryPath: String {
-        let documentDir = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first as? String
-        return documentDir?.stringByAppendingPathComponent(path) ?? path
+        let documentURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        return documentURL!.appendingPathComponent(path).absoluteString
     }
 }

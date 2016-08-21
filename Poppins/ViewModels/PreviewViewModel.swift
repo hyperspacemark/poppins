@@ -1,3 +1,3 @@
 struct PreviewViewModel {
-    let gifData: NSData
+    let gifData: Data
 }

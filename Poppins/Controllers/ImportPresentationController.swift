@@ -6,46 +6,46 @@ class ImportPresentationController: UIPresentationController {
 
     init(presentedViewController: UIViewController!, presentingViewController: UIViewController!, size: CGSize) {
         self.size = size
-        super.init(presentedViewController: presentedViewController, presentingViewController: presentingViewController)
+        super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
 
     override func presentationTransitionWillBegin() {
-        dimmingView.frame = containerView.bounds
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
-        blurView.frame = containerView.bounds
+        dimmingView.frame = (containerView?.bounds)!
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+        blurView.frame = (containerView?.bounds)!
         dimmingView.addSubview(blurView)
         dimmingView.alpha = 0
 
-        containerView.addSubview(dimmingView)
-        containerView.addSubview(presentedView())
+        containerView?.addSubview(dimmingView)
+        containerView?.addSubview(presentedView!)
 
-        let transitionCoordinator = presentingViewController.transitionCoordinator()
-        transitionCoordinator?.animateAlongsideTransition({ _ in
+        let transitionCoordinator = presentingViewController.transitionCoordinator
+        transitionCoordinator?.animate(alongsideTransition: { _ in
             self.dimmingView.alpha = 1
-        }, completion: .None)
+        }, completion: .none)
     }
 
-    override func presentationTransitionDidEnd(completed: Bool) {
+    override func presentationTransitionDidEnd(_ completed: Bool) {
         if !completed {
             dimmingView.removeFromSuperview()
         }
     }
 
     override func dismissalTransitionWillBegin() {
-        let transitionCoordinator = presentingViewController.transitionCoordinator()
-        transitionCoordinator?.animateAlongsideTransition({ _ in
+        let transitionCoordinator = presentingViewController.transitionCoordinator
+        transitionCoordinator?.animate(alongsideTransition: { _ in
             self.dimmingView.alpha = 0
-        }, completion: .None)
+        }, completion: .none)
     }
 
-    override func dismissalTransitionDidEnd(completed: Bool) {
+    override func dismissalTransitionDidEnd(_ completed: Bool) {
         if completed {
             dimmingView.removeFromSuperview()
         }
     }
 
-    override func frameOfPresentedViewInContainerView() -> CGRect {
-        let bounds = containerView.bounds
-        return bounds.centeredRectForSize(size)
+    override var frameOfPresentedViewInContainerView: CGRect {
+        let bounds = containerView?.bounds
+        return bounds?.centeredRectForSize(size) ?? .zero
     }
 }

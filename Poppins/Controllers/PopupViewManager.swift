@@ -4,7 +4,7 @@ class PopupViewManager {
     private var importViewController: ImportViewController?
     private var importTransitionDelegate: ImportTransitioningDelegate?
 
-    func previewViewController(startingFrame: CGRect)(path: String)(size: CGSize) -> PreviewViewController {
+    func previewViewController(_ startingFrame: CGRect, _ path: String, _ size: CGSize) -> PreviewViewController {
         previewTransitionDelegate = PreviewTransitioningDelegate(startingFrame: startingFrame)
         previewViewController = PreviewViewController.create()
         previewViewController?.transitioningDelegate = previewTransitionDelegate
@@ -13,12 +13,12 @@ class PopupViewManager {
     }
 
     func recyclePreview() {
-        previewTransitionDelegate = .None
-        previewViewController?.controller = .None
-        previewViewController = .None
+        previewTransitionDelegate = .none
+        previewViewController?.controller = .none
+        previewViewController = .none
     }
 
-    func importViewController(controller: ImportController) -> ImportViewController {
+    func importViewController(_ controller: ImportController) -> ImportViewController {
         importTransitionDelegate = ImportTransitioningDelegate()
         importViewController = ImportViewController.create()
         importViewController?.transitioningDelegate = importTransitionDelegate
@@ -27,8 +27,8 @@ class PopupViewManager {
     }
 
     func recycleImport() {
-        importTransitionDelegate = .None
-        importViewController?.controller = .None
-        importViewController = .None
+        importTransitionDelegate = .none
+        importViewController?.controller = .none
+        importViewController = .none
     }
 }

@@ -1,7 +1,7 @@
 struct LinkAccountController {
     let manager: LinkManager
 
-    func linkAccount(parent: UIViewController) {
+    func linkAccount(_ parent: UIViewController) {
         manager.setService(DropboxService())
         manager.setup()
         manager.initiateAuthentication(parent)

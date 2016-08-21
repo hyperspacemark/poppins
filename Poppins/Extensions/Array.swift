@@ -1,13 +1,13 @@
-func safeValue<T>(array: [T], index: Int) -> T? {
+func safeValue<T>(_ array: [T], index: Int) -> T? {
     return array.safeValue(index)
 }
 
 extension Array {
-    func safeValue(index: Int) -> T? {
-        return contains(startIndex..<endIndex, index) ? self[index] : .None
+    func safeValue(_ index: Int) -> Element? {
+        return (startIndex..<endIndex).contains(index) ? self[index] : .none
     }
 }
 
-func compact<T>(ts: [T?]) -> [T] {
+func compact<T>(_ ts: [T?]) -> [T] {
     return ts.reduce([]) { accum, item in item.map { accum + [$0] } ?? accum }
 }

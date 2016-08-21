@@ -11,22 +11,22 @@ class CascadeViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationController?.navigationBar.setBackgroundImage(UIImage(named: "NavigationBarBackground"), forBarMetrics: .Default)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(named: "NavigationBarBackground"), for: .default)
         navigationItem.titleView = UIImage(named: "PoppinsTitle").map { UIImageView(image: $0) }
 
         let layout = collectionView?.collectionViewLayout as? CascadeLayout
         layout?.delegate = self
         collectionView?.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 10, right: 10)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("sync"), name: UIApplicationDidBecomeActiveNotification, object: .None)
+        NotificationCenter.default.addObserver(self, selector: #selector(CascadeViewController.sync), name: NSNotification.Name.UIApplicationDidBecomeActive, object: .none)
         sync()
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchImages()
 
@@ -40,7 +40,7 @@ class CascadeViewController: UICollectionViewController {
 
         if controller?.hasPasteboardImage ?? false {
             let alert = controller?.viewModel.alertControllerForImportingPasteboardImage(presentImportView)
-            alert.map { self.presentViewController($0, animated: true, completion: .None) }
+            alert.map { self.present($0, animated: true, completion: .none) }
         }
     }
 
@@ -49,10 +49,10 @@ class CascadeViewController: UICollectionViewController {
         controller?.registerForChanges { inserted, updated, deleted in
             self.hideEmptyState()
             _ = self.collectionView?.performBatchUpdates({
-                self.collectionView?.insertItemsAtIndexPaths(inserted)
-                self.collectionView?.reloadItemsAtIndexPaths(updated)
-                self.collectionView?.deleteItemsAtIndexPaths(deleted)
-            }, completion: .None)
+                self.collectionView?.insertItems(at: inserted)
+                self.collectionView?.reloadItems(at: updated)
+                self.collectionView?.deleteItems(at: deleted)
+            }, completion: .none)
         }
     }
 
@@ -63,57 +63,66 @@ class CascadeViewController: UICollectionViewController {
 
     private func hideEmptyState() {
         let emptyStateViewController = childViewControllers.last as? EmptyStateViewController
-        emptyStateViewController?.removeFromParent { self.collectionView?.backgroundView = .None }
+        emptyStateViewController?.removeFromParent { self.collectionView?.backgroundView = .none }
     }
 
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return controller?.viewModel.numberOfImages ?? 0
     }
 
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PoppinsCell", forIndexPath: indexPath) as! PoppinsCell
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PoppinsCell", for: indexPath) as! PoppinsCell
         cell.controller = controller?.cellControllerForIndexPath(indexPath)
         return cell
     }
 
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItem indexPath: IndexPath) -> CGSize {
         return controller?.viewModel.imageSizeForIndexPath(indexPath) ?? CGSize(width: 1, height: 1)
     }
 
-    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let gifItemSource = controller?.viewModel.gifItemSourceForIndexPath(indexPath)
 
         if let source = gifItemSource {
-            let activityVC = UIActivityViewController(activityItems: [source], applicationActivities: [FacebookMessengerActivity()])
-            presentViewController(activityVC, animated: true, completion: .None)
+//            let activities: [UIActivity] = [FacebookMessengerActivity()]
+            let activities: [UIActivity] = []
+            let activityVC = UIActivityViewController(activityItems: [source], applicationActivities: activities)
+            present(activityVC, animated: true, completion: .none)
         }
     }
 
-    @IBAction func hold(gesture: UILongPressGestureRecognizer) {
-        if gesture.state == .Began {
-            let point = gesture.locationInView(collectionView)
-            let indexPath = collectionView?.indexPathForItemAtPoint(point)
-            let frame = (indexPath >>- { self.collectionView?.layoutAttributesForItemAtIndexPath($0) })?.frame
-            let realFrame = frame >>- { self.collectionView?.convertRect($0, toView: self.navigationController?.view) }
+    @IBAction func hold(_ gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            let point = gesture.location(in: collectionView)
+            let indexPath = collectionView?.indexPathForItem(at: point)
+            let frame = (indexPath >>- { self.collectionView?.layoutAttributesForItem(at: $0) })?.frame
+            let realFrame = frame >>- { self.collectionView?.convert($0, to: self.navigationController?.view) }
             let path = indexPath >>- { self.controller?.viewModel.imagePathForIndexPath($0) }
             let size = indexPath >>- { self.controller?.viewModel.imageSizeForIndexPath($0) }
 
-            let previewViewController = popupViewManager.previewViewController <^> realFrame <*> path <*> size
-            previewViewController.map { self.presentViewController($0, animated: true, completion: .None) }
-        } else if gesture.state == .Ended {
-            dismissViewControllerAnimated(true, completion: popupViewManager.recyclePreview)
+            if
+                let frame = realFrame,
+                let path = path,
+                let size = size
+            {
+                let previewViewController = popupViewManager.previewViewController(frame, path, size)
+                self.present(previewViewController, animated: true, completion: nil)
+            }
+            
+        } else if gesture.state == .ended {
+            dismiss(animated: true, completion: popupViewManager.recyclePreview)
         }
     }
 
     private func presentImportView() {
         let importViewController = popupViewManager.importViewController <^> controller?.importController()
         importViewController?.importViewDidDismiss = popupViewManager.recycleImport
-        importViewController.map { self.presentViewController($0, animated: true, completion: .None) }
+        importViewController.map { self.present($0, animated: true, completion: .none) }
     }
 }
 
 extension CascadeViewController: CascadeLayoutDelegate {
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: CascadeLayout, numberOfColumnsInSectionAtIndexPath indexPath: NSIndexPath) -> Int {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: CascadeLayout, numberOfColumnsInSectionAtIndexPath indexPath: IndexPath) -> Int {
         return 2
     }
 }

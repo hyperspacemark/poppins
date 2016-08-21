@@ -8,27 +8,27 @@ let JPEGType = CFBridgingRetain(kUTTypeJPEG) as! String
 let PNGType = CFBridgingRetain(kUTTypePNG) as! String
 
 struct Pasteboard {
-    static func fetchImageData() -> (data: NSData, type: String)? {
-        let systemPasteboard = UIPasteboard.generalPasteboard()
+    static func fetchImageData() -> (data: Data, type: String)? {
+        let systemPasteboard = UIPasteboard.general
 
-        if let gif = systemPasteboard.dataForPasteboardType(GIFType) { return (gif, GIFType) }
-        if let jpeg = systemPasteboard.dataForPasteboardType(JPEGType) { return (jpeg, JPEGType) }
-        if let png = systemPasteboard.dataForPasteboardType(PNGType) { return (png, PNGType) }
+        if let gif = systemPasteboard.data(forPasteboardType: GIFType) { return (gif, GIFType) }
+        if let jpeg = systemPasteboard.data(forPasteboardType: JPEGType) { return (jpeg, JPEGType) }
+        if let png = systemPasteboard.data(forPasteboardType: PNGType) { return (png, PNGType) }
 
-        return .None
+        return .none
     }
 
     static var hasImageData :Bool {
         if !hasPasteboardChanged { return false }
 
-        let systemPasteboard = UIPasteboard.generalPasteboard()
-        NSUserDefaults.standardUserDefaults().setInteger(systemPasteboard.changeCount, forKey: LastCheckedPasteboardVersionKey)
+        let systemPasteboard = UIPasteboard.general
+        UserDefaults.standard.set(systemPasteboard.changeCount, forKey: LastCheckedPasteboardVersionKey)
 
-        return systemPasteboard.containsPasteboardTypes([GIFType, JPEGType, PNGType])
+        return systemPasteboard.contains(pasteboardTypes: [GIFType, JPEGType, PNGType])
     }
 
-    private static var hasPasteboardChanged: Bool {
-        let lastCheckedVersion = NSUserDefaults.standardUserDefaults().integerForKey(LastCheckedPasteboardVersionKey)
-        return lastCheckedVersion != UIPasteboard.generalPasteboard().changeCount
+    fileprivate static var hasPasteboardChanged: Bool {
+        let lastCheckedVersion = UserDefaults.standard.integer(forKey: LastCheckedPasteboardVersionKey)
+        return lastCheckedVersion != UIPasteboard.general.changeCount
     }
 }

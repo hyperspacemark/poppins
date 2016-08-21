@@ -1,15 +1,15 @@
-@objc public class NotificationListener {
+open class NotificationListener {
     var fired: Bool = false
 
     init(notificationName: String) {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handler", name: notificationName, object: .None)
+        NotificationCenter.default.addObserver(self, selector: #selector(getter: UIPreviewAction.handler), name: NSNotification.Name(rawValue: notificationName), object: .none)
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
-    public func handler() {
+    open func handler() {
         fired = true
     }
 }

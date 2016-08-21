@@ -13,31 +13,31 @@ class PreviewViewController: UIViewController, ViewModelObserver {
         }
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
     }
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         setup()
     }
 
     deinit {
-        gifView.cleanup()
+        gifView.prepareForReuse()
     }
 
     func setup() {
-        modalPresentationStyle = .Custom
+        modalPresentationStyle = .custom
     }
 
     func viewModelDidChange() {
-        { _ = self.gifView?.animateWithImageData(data: $0.gifData) } <^> self.controller?.viewModel
+        { _ = self.gifView?.animate(withGIFData: $0.gifData) } <^> self.controller?.viewModel
     }
 }
 
 extension PreviewViewController {
     class func create() -> PreviewViewController {
-        return PreviewViewController(nibName: "PreviewView", bundle: .None)
+        return PreviewViewController(nibName: "PreviewView", bundle: .none)
     }
 }

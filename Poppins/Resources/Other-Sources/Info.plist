@@ -2,14 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>DropboxSecret</key>
-	<string>${DROPBOX_SECRET}</string>
-	<key>DropboxKey</key>
-	<string>${DROPBOX_KEY}</string>
-	<key>FacebookDisplayName</key>
-	<string>Poppins</string>
-	<key>FacebookAppID</key>
-	<string>${FACEBOOK_APP_ID}</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -17,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.thoughtbot.poppins</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -42,6 +34,14 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>DropboxKey</key>
+	<string>${DROPBOX_KEY}</string>
+	<key>DropboxSecret</key>
+	<string>${DROPBOX_SECRET}</string>
+	<key>FacebookAppID</key>
+	<string>${FACEBOOK_APP_ID}</string>
+	<key>FacebookDisplayName</key>
+	<string>Poppins</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>

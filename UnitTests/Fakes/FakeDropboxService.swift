@@ -3,21 +3,21 @@ import Result
 class FakeDropboxService: LinkableService {
     var lastCall: String = ""
     var controller: UIViewController?
-    var url: NSURL?
+    var url: URL?
 
-    let type: Service = .Dropbox
+    let type: Service = .dropbox
     let client: SyncClient = FakeDropboxSyncClient()
 
     func setup() {
         lastCall = "setup"
     }
 
-    func initiateAuthentication<A>(controller: A) {
+    func initiateAuthentication<A>(_ controller: A) {
         lastCall = "connect"
         self.controller = controller as? UIViewController
     }
 
-    func finalizeAuthentication(url: NSURL) -> Bool {
+    func finalizeAuthentication(_ url: URL) -> Bool {
         lastCall = "handleURL"
         self.url = url
         return true
@@ -41,17 +41,17 @@ class FakeDropboxSyncClient: SyncClient {
         return Signal()
     }
 
-    func getFile(path: String, destinationPath: String) -> Signal<String> {
+    func getFile(_ path: String, destinationPath: String) -> Signal<String> {
         lastCall = "getFile"
         return Signal()
     }
 
-    func getShareURL(path: String) -> Signal<String> {
+    func getShareURL(_ path: String) -> Signal<String> {
         lastCall = "getShareURL"
         return Signal()
     }
 
-    func uploadFile(filename: String, localPath: String) -> Signal<Void> {
+    func uploadFile(_ filename: String, localPath: String) -> Signal<Void> {
         lastCall = "uploadFile"
         return Signal()
     }

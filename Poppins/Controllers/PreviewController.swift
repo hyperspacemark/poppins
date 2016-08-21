@@ -4,7 +4,7 @@ class PreviewController {
     let path: String
     let size: CGSize
     var observer: ViewModelObserver?
-    var data = NSData()
+    var data = Data()
 
     var viewModel: PreviewViewModel {
         return PreviewViewModel(gifData: data)
@@ -16,10 +16,10 @@ class PreviewController {
     }
 
     func loadData() {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)) {
-            if let d = NSData(contentsOfFile: self.path) {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.userInitiated).async {
+            if let d = try? Data(contentsOf: URL(fileURLWithPath: self.path)) {
                 self.data = d
-                dispatch_async(dispatch_get_main_queue()) { _ = self.observer?.viewModelDidChange() }
+                DispatchQueue.main.async { _ = self.observer?.viewModelDidChange() }
             }
         }
     }

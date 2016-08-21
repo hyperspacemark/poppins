@@ -1,12 +1,12 @@
 class UnconfiguredService: LinkableService {
-    let type: Service = .Unconfigured
+    let type: Service = .unconfigured
     let client: SyncClient = UnconfiguredClient()
 
     func setup() {}
 
     func initiateAuthentication<T>(_: T) {}
 
-    func finalizeAuthentication(_: NSURL) -> Bool {
+    func finalizeAuthentication(_: URL) -> Bool {
         return false
     }
 
